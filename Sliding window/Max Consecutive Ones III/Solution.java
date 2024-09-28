@@ -20,7 +20,7 @@ Bolded numbers were flipped from 0 to 1. The longest subarray is underlined.
 
 //Solution
 /*
-1. when we say we can flip max k number of zero to 1, this simply in a valid window, we can take max k zeros.
+1. when we say we can flip max k number of zero to 1, this simply means, in a valid window we can take max k zeros.
 2. so we keep maintaining a window, if it exceeds k number of zeros, we shrink it.
 3. typical variable size sliding window problem.
  */
