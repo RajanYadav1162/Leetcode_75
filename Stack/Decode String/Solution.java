@@ -1,56 +1,81 @@
-import java.util.*;
+import java.util.Deque;
+import java.util.LinkedList;
 
 /*
-You are given a string s, which contains stars *.
+Given an encoded string, return its decoded string.
 
-In one operation, you can:
+The encoding rule is: k[encoded_string], where the encoded_string inside the square brackets is being repeated exactly k times. Note that k is guaranteed to be a positive integer.
 
-Choose a star in s.
-Remove the closest non-star character to its left, as well as remove the star itself.
-Return the string after all stars have been removed.
+You may assume that the input string is always valid; there are no extra white spaces, square brackets are well-formed, etc. Furthermore, you may assume that the original data does not contain any digits and that digits are only for those repeat numbers, k. For example, there will not be input like 3a or 2[4].
 
-Note:
+The test cases are generated so that the length of the output will never exceed 105.
 
-The input will be generated such that the operation is always possible.
-It can be shown that the resulting string will always be unique.
 
 
 Example 1:
 
-Input: s = "leet**cod*e"
-Output: "lecoe"
-Explanation: Performing the removals from left to right:
-- The closest character to the 1st star is 't' in "leet**cod*e". s becomes "lee*cod*e".
-- The closest character to the 2nd star is 'e' in "lee*cod*e". s becomes "lecod*e".
-- The closest character to the 3rd star is 'd' in
+Input: s = "3[a]2[bc]"
+Output: "aaabcbc"
+Example 2:
+
+Input: s = "3[a2[c]]"
+Output: "accaccacc"
+Example 3:
+
+Input: s = "2[abc]3[cd]ef"
+Output: "abcabccdcdcdef"
  */
 
 
-//solution idea
-/*
-1. we use stack to solve this problem, whenever something remove do something to adjacent(left, right). stack might be the one DS.
-2. we are going to iterate over s, if its not a '*', we are gonna simply push it, otherwise pop from stack.
-3. final ans will be the value in stack, don't forget stack values are always pop from top, so we need to reverse it.
- */
 class Solution {
 
-  public String removeStars(String s) {
-    int n = s.length();
+  //"3[a]2[bc]"
+  public String decodeString(String s) {
     Deque<Character> stack = new LinkedList<>();
+    StringBuilder ans = new StringBuilder();
 
-    for (var ch : s.toCharArray()) {
-      if (ch == '*') {
+    for (int i = s.length() - 1; i >= 0; i--) {
+      char ch = s.charAt(i);
+      if (ch == '[') {
+
+        // sb will keep track of the string in the square bracket[abc]--> sb = abc;
+        StringBuilder sb = new StringBuilder();
+        while (stack.peek() != ']') {
+          sb.append(stack.pop());
+        }
         stack.pop();
+
+        //since in the question it says that before '[', we'll have a number, we are building the number here.
+        //since number can be range from 1-300, we've to keep iterating
+        int j = i - 1;
+        StringBuilder number = new StringBuilder();
+        while (j >= 0 && Character.isDigit(s.charAt(j))) {
+          number.insert(0, s.charAt(j));
+          j--;
+        }
+
+        int n = Integer.parseInt(number.toString());
+        StringBuilder temp = new StringBuilder(sb);
+        temp.reverse();
+
+        //depending on how many times we have to repeat, we repeat current string in bracket 'n' number of times.
+        while (n-- > 0) {
+          for (var c : temp.toString().toCharArray()) {
+            stack.push(c);
+          }
+        }
+        i = j + 1;
       } else {
         stack.push(ch);
       }
     }
 
-    StringBuilder sb = new StringBuilder();
     while (!stack.isEmpty()) {
-      sb.append(stack.pop());
+      ans.append(stack.pop());
     }
 
-    return sb.reverse().toString();
+    return ans.toString();
   }
 }
+
+
