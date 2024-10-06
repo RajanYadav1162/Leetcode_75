@@ -38,11 +38,14 @@ class Solution {
   String s1, s2;
   int n1, n2;
 
+  Integer[][] memo;
+
   public int minDistance(String word1, String word2) {
     s1 = word1;
     s2 = word2;
     n1 = word1.length();
     n2 = word2.length();
+    memo = new Integer[n1][n2];
 
     return dp(0, 0);
   }
@@ -60,6 +63,11 @@ class Solution {
     if (j == n2) {
       return n1 - i;
     }
+
+    // if result already in cache
+    if (memo[i][j] != null)
+      return memo[i][j];
+
     int ed = Integer.MAX_VALUE;
 
     // if match
@@ -75,7 +83,7 @@ class Solution {
       ed = Math.min(ed, 1 + dp(i + 1, j + 1));
     }
 
-    return ed;
+    return memo[i][j] = ed;
   }
 }
 
